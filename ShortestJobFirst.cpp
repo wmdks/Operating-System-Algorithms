@@ -1,95 +1,91 @@
-#include <iostream>
-#include <algorithm>
-#include <cstring>
+
+#include<iostream> 
+using namespace std; 
 
 
-using namespace std;
-
-typedef struct proccess
-{
-	int ArrivalTime,BurstTime,CompletionTime,TurnAroundTime,WaitingTime, btt;
-	string processID;
-
-}Schedule;
+void findWaitingTime(int processes[], int n, int bt[], 	int wt[], int at[]) ;
+void findTurnAroundTime(int processes[], int n, int bt[],int wt[], int tat[]);
+void findavgTime(int processes[], int n, int bt[], int at[]) ;
 
 
-bool compare(Schedule a,Schedule b)
-{
-	return a.ArrivalTime<b.ArrivalTime;
 
+
+int main() 
+{ 
+    int n=3;
+    int pid[n]={0}, bt[n]={0}, at[n]={0};
+    
+    for(int i=0; i<n;i++)
+    {
+    	cout<<"Enter data for process- "<<i<<endl;
+    	cout<<"enter pid :";
+    	cin>>pid[i];
+    	cout<<"enter bt :";
+    	cin>>bt[i];
+    	cout<<"enter at :";
+    	cin>>at[i];
+	}
+    
+	findavgTime(pid, n, bt, at); 
+
+	return 0; 
+} 
+
+
+void findWaitingTime(int processes[], int n, int bt[], 	int wt[], int at[]) 
+{ 
+	int service_time[n]; 
+	service_time[0] = 0; 
+	wt[0] = 0; 
+
+
+	for (int i = 1; i < n ; i++) 
+	{ 
 	
-}
+		service_time[i] = service_time[i-1] + bt[i-1]; 
 
-
-bool compare2(Schedule a,Schedule b)
-{
-	return a.BurstTime<b.BurstTime;
-
-
-}
-
-int main()
-{
-	Schedule procss[10];
-
-	int n,i,j,pcom;
-	
-
-	cout<<"Enter number of Process:";
-	cin>>n;
-
-	cout<<"Enter Process ID arrivalTime burstTime "<<endl;
-
-	for(i=0;i<n;i++)
-	{
-		cin>>procss[i].processID;
-		cin>>procss[i].ArrivalTime;
-		cin>>procss[i].BurstTime;
 		
-		procss[i].btt=procss[i].BurstTime;
-	}
+		wt[i] = service_time[i] - at[i]; 
 
-	sort(procss,procss+n,compare);
-	i=0;
-	pcom=0;
-	while(pcom<n)
-	{
-		for(j=0;j<n;j++)
-		{
-			if(procss[j].ArrivalTime>i)
-			break;
-		}
-		sort(procss,procss+j,compare2);
-		if(j>0)
-		{
-			for(j=0;j<n;j++)
-			{
-				if(procss[j].BurstTime!=0)
-				break;
-			}
-			if(procss[j].ArrivalTime>i)
-			{
-				i=procss[j].ArrivalTime;
+		
+		if (wt[i] < 0) 
+			wt[i] = 0; 
+	} 
+} 
 
-			}
-			procss[j].CompletionTime=i+1;
-			procss[j].BurstTime--;
-		}
-		i++;
-		pcom=0;
-		for(j=0;j<n;j++)
-		{
-			if(procss[j].BurstTime==0)
-			pcom++;
-		}
-	}
-	cout<<"ProID\tAtime\tBtime\tCtime\tTtime\tWtime\n";
-	for(i=0;i<n;i++)
-	{
-		procss[i].TurnAroundTime=procss[i].CompletionTime-procss[i].ArrivalTime;
-		procss[i].WaitingTime=procss[i].TurnAroundTime-procss[i].btt;
-		cout<<procss[i].processID<<"\t"<<procss[i].ArrivalTime<<"\t"<<procss[i].btt<<"\t"<<procss[i].CompletionTime<<"\t"<<procss[i].TurnAroundTime<<"\t"<<procss[i].WaitingTime;
-		cout<<endl;
-	}
-	return 0;
-}
+void findTurnAroundTime(int processes[], int n, int bt[],int wt[], int tat[]) 
+{ 
+	 
+	for (int i = 0; i < n ; i++) 
+		tat[i] = bt[i] + wt[i]; 
+} 
+
+void findavgTime(int processes[], int n, int bt[], int at[]) 
+{ 
+	int wt[n], tat[n]; 
+
+	
+	findWaitingTime(processes, n, bt, wt, at); 
+
+
+	findTurnAroundTime(processes, n, bt, wt, tat); 
+
+	cout << "Processes " << " Burst Time " << " Arrival Time "
+		<< " Waiting Time " << " Turn-Around Time "
+		<< " Completion Time \n"; 
+	int total_wt = 0, total_tat = 0; 
+	for (int i = 0 ; i < n ; i++) 
+	{ 
+		total_wt = total_wt + wt[i]; 
+		total_tat = total_tat + tat[i]; 
+		int compl_time = tat[i] + at[i]; 
+		cout << " " << i+1 << "\t\t" << bt[i] << "\t\t"
+			<< at[i] << "\t\t" << wt[i] << "\t\t "
+			<< tat[i] << "\t\t " << compl_time << endl; 
+	} 
+
+	cout << "Average waiting time = "
+		<< (float)total_wt / (float)n; 
+	cout << "\nAverage turn around time = "
+		<< (float)total_tat / (float)n; 
+} 
