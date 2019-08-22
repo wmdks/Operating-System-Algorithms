@@ -2,9 +2,7 @@
 using namespace std;
 int main()
 {
-
-
-    int n,BurstTime[20],WaitingTime[20],TurnedAroundTime[20],avWaitingTime=0,avTurnedAroundTime=0,i,j;
+   int n,BurstTime[20],WaitingTime[20],TurnedAroundTime[20],avWaitingTime=0,avTurnedAroundTime=0,i,j;
 	
     cout<<"Enter total number of processes <maximum 20>:";
     cin>>n;
